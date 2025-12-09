@@ -4,6 +4,7 @@ fn main() {
     let contents = std::fs::read_to_string(file_path).expect("File Read error");
 
     let mut part1 = 0;
+    let mut part2 = 0;
 
     // split content into lines
     let banks = contents.lines();
@@ -30,6 +31,28 @@ fn main() {
             format!("{max}").parse::<u32>().unwrap()
         };
         part1 += vec![left_max, right_max].iter().max().unwrap();
+
+        /* part 2 */
+        // part 2 我決定換個方式，用 argsort() 的輔助
+        let mut argsorted = argsort(&joltages);
+        dbg!(&joltages, &argsorted);
+        argsorted.reverse();
+        _ = argsorted.split_off(12);
+        argsorted.sort();
+        // 串接起來
+        let mut result = String::new();
+        argsorted.iter().for_each(|index| result = format!("{result}{}", joltages.get(*index).unwrap()));
+        part2 += result.parse::<usize>().unwrap();
     }
     println!("Part 1: {}", part1);
+    println!("Part 2: {}", part2); // FIXME: 234234234234278 選擇後是 343434234278，但有更好的選擇 434234234278
+}
+
+/// Source - https://stackoverflow.com/a
+/// Posted by kmdreko
+/// Retrieved 2025-12-05, License - CC BY-SA 4.0
+pub fn argsort<T: Ord>(data: &[T]) -> Vec<usize> {
+    let mut indices = (0..data.len()).collect::<Vec<_>>();
+    indices.sort_by_key(|&i| &data[i]);
+    indices
 }
